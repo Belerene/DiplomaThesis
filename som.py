@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Apr 20 16:38:23 2016
+Created on Wed Mar 1 16:38:23 2017
 
 @author: Lukas
 """
@@ -10,52 +10,39 @@ import matplotlib.pyplot as plt
 
 class som:
     def __init__(self):
-        data = self.loadTrain()
-        self.data_num = 210
+        #data = self.loadTrain()
+        self.data_num = 210 #Number of data instances
         self.w = 20
         self.h = 15        
-        W = np.random.random_sample((self.w,self.h))
-        Ai = np.random.random_sample((self.w,self.h))
-        bias = np.random.random_sample((self.w,self.h))
-        eps = 100
-        alpha_s = 1
-        alpha_f = 0.5
-        lambda_s = 5.0
-        lambda_f = 0.01
-        lambdaOld = lambda_s
-        alphaOld = alpha_s
-        estQEs = np.ones([1,1])
-        alphas = np.ones([1,1])
-        lambdas = np.ones([1,1])
-        alpha = alpha_s
+        self.W = np.random.random_sample((self.w,self.h))
+        self.Ai = np.random.random_sample((self.w,self.h))
+        self.bias = np.random.random_sample((self.w,self.h))
+        
+     
+     
+    """
+    Trains the som - alpha:learning rate, lamb:gaussian width of neigh.func., epochs:number of epochs
+    """   
+    def trainSom(self,alpha,lamb,epochs,data):
+        eps = epochs
+        lambda_s = lamb
         for ep in range(eps):
             print(str(ep))
             QE = 0.0
-            lamb = lambda_s*np.exp(-float(ep)/float(eps))
-            #alpha = alpha_s*np.exp(-float(ep)/float(eps))
-            #lamb = lambda_s*(lambda_f/lambda_s)**(float(ep)/float(eps))
-            alpha = alpha_s*(alpha_f/alpha_s)**(float(ep)/float(eps))
-            alphas = np.append(alphas,alphaOld-alpha)##
-            alphaOld = alpha
-            lambdas = np.append(lambdas,lambdaOld-lamb)##
-            lambdaOld = lamb
+            lamb = lambda_s*np.exp(-float(ep)/float(eps))         
+            #alpha = alpha_s*(alpha_f/alpha_s)**(float(ep)/float(eps)) Tato alpha sa pouzivala
+
             data = np.random.permutation(data.T).T
-            wOldCoords = np.copy(W)
             for i in range(self.data_num):
                 x = data[0:7,i]
-                bestCoords = self.findClosestNeuron(x,W)
+                bestCoords = self.findClosestNeuron(x,self.W)
                 dist = bestCoords[1]                
                 bestCoords = bestCoords[0]
                 QE = QE+dist
                 for width in range(self.w):
                     for height in range(self.h):
-                        W[width,height] = W[width,height] + alpha * self.neighFunc(width,height,bestCoords[0],bestCoords[1],lamb) * (x-W[width,height])                        
+                        self.W[width,height] = self.W[width,height] + alpha * self.neighFunc(width,height,bestCoords[0],bestCoords[1],lamb) * (x-self.W[width,height])                        
             QE = QE/float(self.data_num)
-            estQEs = np.append(estQEs, QE)
-        estQEs = np.delete(estQEs,0,0)
-        alphas = np.delete(alphas,0,0)
-        lambdas = np.delete(lambdas,0,0)
-        
             
     def averageAdjust(self,wOld, wNew):
         dist = 0
@@ -129,5 +116,9 @@ class som:
                     distance = d
                     coords = [nx,ny]
         return [coords,distance]
+        
+    
+    
+
 
 som()
