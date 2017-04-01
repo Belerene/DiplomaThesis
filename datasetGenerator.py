@@ -23,4 +23,5 @@ class datasetGenerator:
         b = np.zeros((1,sentenceLen))
         pos = np.mod(pos*np.random.randint(550),wordLen)
         b[np.arange(1), pos] = 1
+        return b
         
