@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Mar 26 21:56:36 2017
+
+@author: Lukas
+"""
+
+import som as s
+import datasetGenerator as dg
+import numpy as np
+
+class main:
+    def __init__(self):
+        dat = dg.datasetGenerator(4,4)
+        data = dat.get()
+        a = 1
+    
+main()
