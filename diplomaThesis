@@ -11,8 +11,11 @@ import numpy as np
 
 class main:
     def __init__(self):
-        dat = dg.datasetGenerator(4,4)
+        dat = dg.datasetGenerator('testEpNumbered.txt')
         data = dat.get()
-        a = 1
-    
+        hippocampus = s.som()
+        prefrontal = s.som(30,30,300)
+        dataH, dataW = data.shape
+        for i in range(dataH):
+            hippocampus.train(alpha=0.9,lamb=0.01,epochs=1,)
 main()
