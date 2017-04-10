@@ -14,11 +14,17 @@ class datasetGenerator:
     def __init__(self,txtFile):
         """7patients, 4transitive, 3intransitive """
         self.sentence = np.array([])
+        print("...loading the dataset...")
         self.sentence = np.loadtxt(txtFile,dtype=str,delimiter=';',usecols=range(3))
         self.sentence = self.oneHotEncodeDataset()
         
     def get(self):
         return self.sentence
+        
+    def getEpisodes(self,numOfEpisodes):
+        data = self.sentence
+        np.random.shuffle(data)
+        return data[:numOfEpisodes,:]
         
 
     def oneHotEncodeDataset(self):
