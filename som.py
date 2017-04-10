@@ -9,21 +9,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class som:
-    def __init__(self,width=20,height=15,numOfDataInstances=210):
+    def __init__(self,width=20,height=15,numOfDataInstances=300,dimension=18,sensitivity=0.5):
         #data = self.loadTrain()
+        self.sensitivity = sensitivity
         self.data_num = numOfDataInstances #Number of data instances
+        self.dim = dimension
         self.w = width
         self.h = height        
-        self.W = np.random.random_sample((self.w,self.h))
-        self.Ai = np.random.random_sample((self.w,self.h))
+        self.W = np.random.random_sample((dimension,self.w,self.h))
+        #self.Ai = np.random.random_sample((self.w,self.h))
         self.bias = np.random.random_sample((self.w,self.h))
-        
+        self.mapAssigned = np.zeros((self.w,self.h))
+        self.mapAssigned[self.w/2,self.h/2] = 1
      
     def get(self):
-        return self.w
+        return self.W
         
 
-    def train(self,alpha,lamb,epochs,data):
+    def trainDay(self,alpha,lamb,epochs,data):
         """
         Trains the som - alpha:learning rate, lamb:gaussian width of neigh.func., epochs:number of epochs
         """  
@@ -35,16 +38,23 @@ class som:
             lamb = lambda_s*np.exp(-float(ep)/float(eps))         
             #alpha = alpha_s*(alpha_f/alpha_s)**(float(ep)/float(eps)) Tato alpha sa pouzivala
 
-            data = np.random.permutation(data.T).T
+            #data = np.random.permutation(data.T).T
+            
             for i in range(self.data_num):
-                x = data[0:7,i]
+                x = data[i,:]
+                a = self.mapAssigned
                 bestCoords = self.findClosestNeuron(x,self.W)
+                bestCoords = self.findMostActiveNeuron(x,self.W)
                 dist = bestCoords[1]                
                 bestCoords = bestCoords[0]
+                self.mapAssigned[bestCoords[0],bestCoords[1]] = 1
                 QE = QE+dist
                 for width in range(self.w):
                     for height in range(self.h):
-                        self.W[width,height] = self.W[width,height] + alpha * self.neighFunc(width,height,bestCoords[0],bestCoords[1],lamb) * (x-self.W[width,height])                        
+                        ww = self.W
+                        www = self.W[:,width,height]
+                        self.W[:,width,height] = self.W[:,width,height] + alpha * self.neighFunc(width,height,bestCoords[0],bestCoords[1],lamb) * (x-self.W[:,width,height]) 
+                        www = self.W[:,width,height]
             QE = QE/float(self.data_num)
             
     def averageAdjust(self,wOld, wNew):
@@ -58,25 +68,29 @@ class som:
     """
     Returns activity of a single neuron - formula (4)
     """        
-    def activity(self,x,w,sensitivity,bias):
-        return bias*np.exp(-sensitivity*self.euclidDist(x,w)**2)
+    def activity(self,x,w,bias):
+        return bias*np.exp(-self.sensitivity*self.euclidDist(x,w)**2)
      
      
     """
     Returns activies for every neuron - formula (5)
     """ 
-    def somActivity(self, x, W, sensitivity, bias):
+    def somActivity(self, x):
         aj = 0
         for width in range(self.w):
             for height in range(self.h):
-                aj = aj+self.activity(x,W[width,height],sensitivity,bias[width,height])    
+                aj = aj+np.sum(self.activity(x,self.W[:,width,height],self.biases(width,height)))    
         Ai = np.random.random_sample((self.w,self.h))
         for width in range(self.w):
             for height in range(self.h):
-                Ai[width,height] = self.activity(x,W[width,height],sensitivity,bias[width,height])/aj
+                b = np.sum(self.activity(x,self.W[:,width,height],self.biases(width,height)))
+                Ai[width,height] = np.sum(self.activity(x,self.W[:,width,height],self.biases(width,height)))/aj
         return Ai
      
-     
+    
+    def biases(self,w,h):
+        a= (self.mapAssigned[w,h]+self.bias[w,h])/2
+        return a
      
     """
     Returns block-wise reconstructed input - formula (7) 
@@ -108,6 +122,18 @@ class som:
     def euclidDist(self,x,y):
         d = np.linalg.norm(x-y,2)
         return d
+    
+    def findMostActiveNeuron(self,x,w):
+        activity = -9999999
+        coords = [-1,-1]
+        somAct = self.somActivity(x)
+        for nx in range(self.w):
+            for ny in range(self.h):
+                a = somAct[nx,ny]
+                if activity<somAct[nx,ny]:
+                    activity = somAct[nx,ny]
+                    coords = [nx,ny]
+        return [coords,activity]
     
     def findClosestNeuron(self,x,w):
         distance = 9999999
