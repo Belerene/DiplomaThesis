@@ -1,0 +1,43 @@
+Man=(Man:1) // =() means the symbol is a terminal (i.e. will not be expanded any further). Also, it will not be followed by a semicolon, but by a space
+Woman=(Woman:2)
+Dog=(Dog:3)
+Cat=(Cat:4)
+Cup=(Cup:5)
+Chair=(Chair:6)
+Ball=(Ball:7)
+
+Grab=(Grab:1)
+Hit=(Hit:2)
+Push=(Push:3)
+See=(See:4)
+
+Walk=(Walk:1)
+Sneeze=(Sneeze:2)
+Run=(Run:3)
+
+Pad=(Pad:0)
+
+Human=[Man,Woman]
+Animal=[Dog,Cat] 
+Thing=[Cup,Chair,Ball:2] // ball 2x more frequent than cup or chair
+
+Agent=[Human:0.7,Animal:0.3] // human agent with probab 70 % 
+Patient=[Human,Animal,Thing]
+
+TransitiveAction=[Grab,Hit,Push,See]
+
+IntransitiveAction=[Walk,Sneeze,Run]
+
+Padding=[Pad]
+
+Transitive={Agent;Patient;TransitiveAction}
+Intransitive={Agent;IntransitiveAction;Padding}
+
+Episode=[Transitive,Intransitive]
+
+// try Episode as the starting symbol
+
+
+
+
+
