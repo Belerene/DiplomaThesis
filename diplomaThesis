@@ -11,11 +11,19 @@ import numpy as np
 
 class main:
     def __init__(self):
+        days = 10
         dat = dg.datasetGenerator('testEpNumbered.txt')
-        data = dat.get()
-        hippocampus = s.som()
-        prefrontal = s.som(30,30,300)
-        dataH, dataW = data.shape
-        for i in range(dataH):
-            hippocampus.train(alpha=0.9,lamb=0.01,epochs=1,)
+        hippocampus = s.som(50,50,300,18,1)
+        prefrontal = s.som(30,30,300,18,0.3)
+        for j in range(days):
+            data = dat.getEpisodes(300)
+            dataH, dataW = data.shape
+            for i in range(dataH):
+                hippocampus.trainDay(alpha=0.9,lamb=0.01,epochs=1,data=data)
+                aa = hippocampus.get()
+                aaa = hippocampus.mapAssigned
+                a = hippocampus.somActivity(data[i,:],0.5)
+                c = 1
+            b = 2
+            
 main()
