@@ -9,21 +9,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class som:
-    def __init__(self):
+    def __init__(self,width=20,height=15,numOfDataInstances=210):
         #data = self.loadTrain()
-        self.data_num = 210 #Number of data instances
-        self.w = 20
-        self.h = 15        
+        self.data_num = numOfDataInstances #Number of data instances
+        self.w = width
+        self.h = height        
         self.W = np.random.random_sample((self.w,self.h))
         self.Ai = np.random.random_sample((self.w,self.h))
         self.bias = np.random.random_sample((self.w,self.h))
         
      
-     
-    """
-    Trains the som - alpha:learning rate, lamb:gaussian width of neigh.func., epochs:number of epochs
-    """   
-    def trainSom(self,alpha,lamb,epochs,data):
+    def get(self):
+        return self.w
+        
+
+    def train(self,alpha,lamb,epochs,data):
+        """
+        Trains the som - alpha:learning rate, lamb:gaussian width of neigh.func., epochs:number of epochs
+        """  
         eps = epochs
         lambda_s = lamb
         for ep in range(eps):
