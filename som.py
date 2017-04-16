@@ -18,9 +18,9 @@ class som:
         self.h = height        
         self.W = np.random.random_sample((dimension,self.w,self.h))
         #self.Ai = np.random.random_sample((self.w,self.h))
-        self.bias = np.random.random_sample((self.w,self.h))
+        
         self.mapAssigned = np.zeros((self.w,self.h))
-        self.mapAssigned[self.w/2,self.h/2] = 1
+        
      
     def get(self):
         return self.W
@@ -30,12 +30,13 @@ class som:
         """
         Trains the som - alpha:learning rate, lamb:gaussian width of neigh.func., epochs:number of epochs
         """  
+        self.bias = np.random.random_sample((self.w,self.h))
         eps = epochs
         lambda_s = lamb
         for ep in range(eps):
             print(str(ep))
             QE = 0.0
-            lamb = lambda_s*np.exp(-float(ep)/float(eps))         
+            #lamb = lambda_s*np.exp(-float(ep)/float(eps))         
             #alpha = alpha_s*(alpha_f/alpha_s)**(float(ep)/float(eps)) Tato alpha sa pouzivala
 
             #data = np.random.permutation(data.T).T
@@ -43,7 +44,7 @@ class som:
             for i in range(self.data_num):
                 x = data[i,:]
                 a = self.mapAssigned
-                bestCoords = self.findClosestNeuron(x,self.W)
+                #bestCoords = self.findClosestNeuron(x,self.W)
                 bestCoords = self.findMostActiveNeuron(x,self.W)
                 dist = bestCoords[1]                
                 bestCoords = bestCoords[0]
@@ -51,6 +52,7 @@ class som:
                 QE = QE+dist
                 for width in range(self.w):
                     for height in range(self.h):
+                        
                         ww = self.W
                         www = self.W[:,width,height]
                         self.W[:,width,height] = self.W[:,width,height] + alpha * self.neighFunc(width,height,bestCoords[0],bestCoords[1],lamb) * (x-self.W[:,width,height]) 
@@ -89,7 +91,8 @@ class som:
      
     
     def biases(self,w,h):
-        a= (self.mapAssigned[w,h]+self.bias[w,h])/2
+        a= (self.mapAssigned[w,h]*0.7+self.bias[w,h]*0.3)/2
+        #a = (self.mapAssigned[w,h])
         return a
      
     """
