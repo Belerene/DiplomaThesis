@@ -12,7 +12,7 @@ class datasetGenerator:
     sentence = np.array([])
     
     def __init__(self,txtFile):
-        """7patients, 4transitive, 3intransitive """
+        """7actors, 7patients, 4transitive/3intransitive """
         self.sentence = np.array([])
         print("...loading the dataset...")
         self.sentence = np.loadtxt(txtFile,dtype=str,delimiter=';',usecols=range(3))
