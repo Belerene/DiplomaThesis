@@ -13,17 +13,21 @@ class main:
     def __init__(self):
         days = 10
         dat = dg.datasetGenerator('testEpNumbered.txt')
-        hippocampus = s.som(50,50,300,18,1)
-        prefrontal = s.som(30,30,300,18,0.3)
+        hippocampus = s.som(50,50,50,18,1)
+        '''prefrontal = s.som(30,30,300,18,0.3)'''
         for j in range(days):
-            data = dat.getEpisodes(300)
-            dataH, dataW = data.shape
-            for i in range(dataH):
-                hippocampus.trainDay(alpha=0.9,lamb=0.01,epochs=1,data=data)
-                aa = hippocampus.get()
-                aaa = hippocampus.mapAssigned
-                a = hippocampus.somActivity(data[i,:],0.5)
-                c = 1
-            b = 2
+            data = dat.getEpisodes(50)
+            hippocampus.trainDay(alpha=1,lamb=0.01,epochs=1,data=data)
+        aa = hippocampus.get()
+        aaa = hippocampus.mapAssigned
+        a = hippocampus.somActivity(data[0,:])
+        c = self.countInstances(data)
+        d = np.count_nonzero(aaa)
+        d = 5
+            
+    def countInstances(self,data):
+        data_unique = np.vstack({tuple(row) for row in data})
+        h,w = data_unique.shape
+        return h
             
 main()
