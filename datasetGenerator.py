@@ -92,4 +92,4 @@ class datasetGenerator:
             pos = str(int(pos)-1)
         b[np.arange(1), pos] = 1
         return b
-        
+       
